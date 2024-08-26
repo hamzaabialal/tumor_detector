@@ -1,0 +1,173 @@
+<!DOCTYPE HTML>
+{% load static %}
+<html>
+<head>
+    <title>Elements - Solid State by HTML5 UP</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="{% static 'assets/css/main.css' %}" />
+    <noscript><link rel="stylesheet" href="{% static 'assets/css/noscript.css' %}" /></noscript>
+
+    <style>
+        .hidden-input {
+            display: none;
+        }
+
+        /* Styling the upload form section */
+        #uploadForm {
+            margin-top: 20px;
+        }
+
+        #uploadForm .actions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #uploadForm .actions li {
+            margin: 10px 0;
+        }
+
+        #uploadForm input[type="file"] {
+            display: none; /* Hide the default file input */
+        }
+
+        #uploadForm label {
+            display: inline-block;
+            padding: 10px 20px;
+            border: 2px solid #007bff;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+
+        #uploadForm label:hover {
+            background-color: #0056b3;
+        }
+
+        #uploadForm button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #uploadForm button:hover {
+            background-color: #0056b3;
+        }
+
+        #imageContainer {
+            margin-top: 20px;
+        }
+
+        #imageContainer img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body class="is-preload">
+
+<!-- Page Wrapper -->
+<div id="page-wrapper">
+
+    <!-- Header -->
+    <header id="header">
+        <h1><a href="index.html">Solid State</a></h1>
+        <nav>
+            <a href="#menu">Menu</a>
+        </nav>
+    </header>
+
+    <!-- Menu -->
+    <nav id="menu">
+        <div class="inner">
+            <h2>Menu</h2>
+            <ul class="links">
+                <li><a href="{% url 'index' %}">Home</a></li>
+                <li><a href="{% url "tumor_page" %}">Detection</a></li>
+                <li><a href="{% url "elements" %}">Documentation</a></li>
+            </ul>
+            <a href="#" class="close">Close</a>
+        </div>
+    </nav>
+
+    <!-- Wrapper -->
+    <section id="wrapper">
+        <header>
+            <div class="inner">
+                <h2>Tumor Detection</h2>
+                <p>Using advanced techniques to accurately identify tumors.</p>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <div class="wrapper">
+            <div class="inner">
+
+                <section>
+                    <h3 class="major">Brain Tumor Detection</h3>
+                    <p>Detecting brain tumors early is critical for successful treatment and better survival rates. This section will guide you through the various aspects of brain tumor detection and the technologies involved.</p>
+                    <blockquote>"Early detection of brain tumors is crucial for effective treatment and improved survival rates. Utilizing cutting-edge technology, we aim to provide accurate and timely diagnosis to save lives and improve patient outcomes." - Dr. Jane Doe</blockquote>
+                </section>
+
+                <!-- Form for image upload -->
+                <form id="uploadForm" method="post" enctype="multipart/form-data" action="{% url 'tumor_page' %}">
+                    {% csrf_token %}
+                    <section>
+                        <h3 class="major">Upload an Image</h3>
+                        <ul class="actions">
+                            <li>
+                                <!-- File input with styled label -->
+                                <label for="fileInput">Choose Image</label>
+                                <input type="file" id="fileInput" name="image" accept="image/*">
+                            </li>
+                            <li><button type="submit" class="button primary">Submit Image</button></li>
+                        </ul>
+                    </section>
+                </form>
+                <section id="imageContainer" class="box alt">
+                    <div class="row gtr-uniform">
+                        <!-- Images will be displayed here -->
+                    </div>
+                </section>
+
+                <section>
+                    <p><span class="image left"><img src="https://img.etimg.com/thumb/width-420,height-315,imgsize-309740,resizemode-75,msid-108994015/industry/healthcare/biotech/healthcare/worlds-most-powerful-mri-produces-unseen-images-of-human-brain.jpg" alt="Brain Scan" /></span>Detecting brain tumors early can significantly improve the chances of successful treatment. Our advanced imaging technologies provide detailed views of the brain, helping to identify abnormalities at the earliest stages. This allows for timely intervention and better patient outcomes. The integration of AI and machine learning in our diagnostic process enhances accuracy and efficiency, ensuring that no detail is overlooked. Understanding the structure and function of brain tissues is crucial in pinpointing the exact location and nature of a tumor, which is why our imaging techniques are designed to be both comprehensive and precise.</p>
+                    <p><span class="image right"><img src="https://cdn.britannica.com/36/152936-050-92C2B3BD/Magnetic-resonance-imaging-types-abnormalities.jpg" alt="Brain Scan" /></span>Brain tumor detection involves a multi-faceted approach, combining the latest in medical technology with expert analysis. Our team of specialists uses a variety of tools to examine brain scans, including MRI, CT, and PET scans. These methods provide different perspectives and details, allowing for a thorough evaluation. Early detection not only aids in planning effective treatment strategies but also in monitoring the progress and response to treatment. By catching tumors early, we can significantly increase the likelihood of successful outcomes and improve the quality of life for our patients.</p>
+                </section>
+
+            </div>
+        </div>
+
+    </section>
+
+    <!-- Footer -->
+    <section id="footer">
+        <div class="inner">
+            <ul class="copyright">
+                <li>&copy; BrainAI Diagnostics Inc. All rights reserved.</li>
+            </ul>
+        </div>
+    </section>
+
+</div>
+
+<!-- Scripts -->
+<script src="{% static 'assets/js/jquery.min.js' %}"></script>
+<script src="{% static 'assets/js/jquery.scrollex.min.js' %}"></script>
+<script src="{% static 'assets/js/browser.min.js' %}"></script>
+<script src="{% static 'assets/js/breakpoints.min.js' %}"></script>
+<script src="{% static 'assets/js/util.js' %}"></script>
+<script src="{% static 'assets/js/main.js' %}"></script>
+
+</body>
+</html>
