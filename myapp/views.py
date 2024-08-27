@@ -82,6 +82,7 @@ def process_and_predict_image(image_path):
     else:
         print("Prediction failed.")
         return None, None
+from django.core.files.storage import default_storage
 
 # Django TemplateView to handle the image upload and prediction
 class TumorDetectionView(TemplateView):
@@ -92,6 +93,7 @@ class TumorDetectionView(TemplateView):
             image = request.FILES['image']
             image_name = image.name
 
+            # Save the image
             image_path = os.path.join(settings.MEDIA_ROOT, image_name)
             with open(image_path, 'wb+') as destination:
                 for chunk in image.chunks():
@@ -102,19 +104,24 @@ class TumorDetectionView(TemplateView):
 
             if result is not None:
                 # Save the prediction result to the database
-                TumorPrediction.objects.create(
-                    image_path=image_path,
+                tumor_prediction = TumorPrediction.objects.create(
+                    image_path=image_name,
                     result=result,
                     diagnosis=diagnosis
                 )
-            tumor_data =     TumorPrediction.objects.all().first()
+                image_url = default_storage.url(tumor_prediction.image_path)
+            else:
+                image_url = None
 
-
-            context = {'result': tumor_data.result, 'diagnosis': tumor_data.diagnosis, "image_path": tumor_data.image_path}
+            context = {
+                'result': result,
+                'diagnosis': diagnosis,
+                'image_url': image_url
+            }
+            print("images Url .......", image_url)
             return render(request, self.template_name, context)
 
         return render(request, self.template_name)
-
 
 class ElementsPageView(TemplateView):
     template_name = 'elements.html'

@@ -24,13 +24,12 @@
             <!-- Menu -->
             <nav id="menu">
                 <div class="inner">
-                    <h2>Menu</h2>
-                    <ul class="links">
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="tumor.html">Detection</a></li>
-                        <li><a href="elements.html">Documentation</a></li>
-                        <!-- <li><a href="#">Sign Up</a></li>-->
-                    </ul>
+                    <h2>Menu</h2>           <ul class="links">
+    <li><a href="{% url 'home_page' %}">Home</a></li>
+    <li><a href="{% url 'index' %}">Detection</a></li>
+    <li><a href="{% url 'elements_page' %}">Documentation</a></li>
+</ul>
+
                     <a href="#" class="close">Close</a>
                 </div>
             </nav>

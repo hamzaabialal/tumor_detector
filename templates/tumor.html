@@ -91,11 +91,11 @@
     <nav id="menu">
         <div class="inner">
             <h2>Menu</h2>
-            <ul class="links">
-                <li><a href="{% url 'index' %}">Home</a></li>
-                <li><a href="/">Detection</a></li>
-                <li><a href="/">Documentation</a></li>
-            </ul>
+           <ul class="links">
+    <li><a href="{% url 'home_page' %}">Home</a></li>
+    <li><a href="{% url 'index' %}">Detection</a></li>
+    <li><a href="{% url 'elements_page' %}">Documentation</a></li>
+</ul>
             <a href="#" class="close">Close</a>
         </div>
     </nav>
@@ -134,21 +134,23 @@
                         </ul>
                     </section>
                 </form>
+
+                <!-- Displaying the result -->
+                {% if image_url %}
                 <section id="imageContainer" class="box alt">
-                    <div class="row gtr-uniform">
-                        <!-- Images will be displayed here -->
-                    </div>
+                    <h1>Tumor Detection Results</h1>
+                    <p><span class="image left"><img src="{{ image_url }}" alt="Brain Scan" /></span>Detecting brain tumors early can significantly improve the chances of successful treatment. Our advanced imaging technologies provide detailed views of the brain, helping to identify abnormalities at the earliest stages. This allows for timely intervention and better patient outcomes. The integration of AI and machine learning in our diagnostic process enhances accuracy and efficiency, ensuring that no detail is overlooked. Understanding the structure and function of brain tissues is crucial in pinpointing the exact location and nature of a tumor, which is why our imaging techniques are designed to be both comprehensive and precise.</p>
                 </section>
-                <h1>Tumor Detection Results</h1>
-    <p><span class="image left"><img src="{{ image_path }}" alt="Brain Scan" /></span>Detecting brain tumors early can significantly improve the chances of successful treatment. Our advanced imaging technologies provide detailed views of the brain, helping to identify abnormalities at the earliest stages. This allows for timely intervention and better patient outcomes. The integration of AI and machine learning in our diagnostic process enhances accuracy and efficiency, ensuring that no detail is overlooked. Understanding the structure and function of brain tissues is crucial in pinpointing the exact location and nature of a tumor, which is why our imaging techniques are designed to be both comprehensive and precise.</p>
-    {% if result is not None %}
-        <h2>Diagnosis: {{ diagnosis }}</h2>
-        <p>Prediction Confidence: {{ result }}</p>
-    {% else %}
-        <p>No prediction could be made.</p>
-    {% endif %}
+                {% endif %}
 
+                {% if result %}
+                    <h2>Diagnosis: {{ diagnosis }}</h2>
+                    <p>Prediction Confidence: {{ result }}</p>
+                {% else %}
+                    <p>No prediction could be made.</p>
+                {% endif %}
 
+                <!-- Additional content -->
                 <section>
                     <p><span class="image left"><img src="https://img.etimg.com/thumb/width-420,height-315,imgsize-309740,resizemode-75,msid-108994015/industry/healthcare/biotech/healthcare/worlds-most-powerful-mri-produces-unseen-images-of-human-brain.jpg" alt="Brain Scan" /></span>Detecting brain tumors early can significantly improve the chances of successful treatment. Our advanced imaging technologies provide detailed views of the brain, helping to identify abnormalities at the earliest stages. This allows for timely intervention and better patient outcomes. The integration of AI and machine learning in our diagnostic process enhances accuracy and efficiency, ensuring that no detail is overlooked. Understanding the structure and function of brain tissues is crucial in pinpointing the exact location and nature of a tumor, which is why our imaging techniques are designed to be both comprehensive and precise.</p>
                     <p><span class="image right"><img src="https://cdn.britannica.com/36/152936-050-92C2B3BD/Magnetic-resonance-imaging-types-abnormalities.jpg" alt="Brain Scan" /></span>Brain tumor detection involves a multi-faceted approach, combining the latest in medical technology with expert analysis. Our team of specialists uses a variety of tools to examine brain scans, including MRI, CT, and PET scans. These methods provide different perspectives and details, allowing for a thorough evaluation. Early detection not only aids in planning effective treatment strategies but also in monitoring the progress and response to treatment. By catching tumors early, we can significantly increase the likelihood of successful outcomes and improve the quality of life for our patients.</p>

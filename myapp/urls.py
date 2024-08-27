@@ -20,7 +20,7 @@ from . import views
 
 
 urlpatterns = [
-    path('elements/', views.ElementsPageView.as_view(), name='elements'),
-    path('index/', views.IndexPageView.as_view(), name='index'),
+    path('elements/', views.ElementsPageView.as_view(), name='elements_page'),
+    path('index/', views.IndexPageView.as_view(), name='home_page'),
     path('tumor/', views.TumorDetectionView.as_view(), name='index'),
 ]
