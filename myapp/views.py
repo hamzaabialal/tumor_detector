@@ -46,12 +46,16 @@ models = [load_model_safely(path) for path in model_paths]
 models = [model for model in models if model is not None]
 
 def predict_image(image_path):
+    logger.debug(f"Attempting to predict with image at path: {image_path}")
+
     predictions = []
     for i, model in enumerate(models):
         input_shape = model.input_shape[1:3]  # Get the expected input shape
+        logger.debug(f"Model {i+1} expected input shape: {input_shape}")
 
         img = preprocess_image(image_path, input_shape)
         if img is None:
+            logger.debug(f"Image preprocessing failed for path: {image_path}")
             continue
 
         try:
@@ -67,6 +71,7 @@ def predict_image(image_path):
     else:
         logger.error("No predictions were made.")
         return None
+
 
 
 
