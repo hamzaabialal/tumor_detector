@@ -1,126 +1,120 @@
-from django.shortcuts import render
-from django.core.files.storage import default_storage
-from django.conf import settings
-from django.views.generic import TemplateView
-
-from .models import TumorPrediction
+import os
 
 import tensorflow as tf
 import numpy as np
 import cv2
-import os
+import matplotlib.pyplot as plt
+from django.views.generic import TemplateView
+from django.shortcuts import render
+from django.db import models
 
-model_paths = [os.path.join(settings.BASE_DIR, 'myapp/brain_tumor_detector.h5')]
+from djangoProject2 import settings
+from myapp.models import TumorPrediction
 
-
-import logging
-
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
-def load_model_safely(path):
-    try:
-        model = tf.keras.models.load_model(path, compile=False)
-        # Compile the model if it was loaded successfully
-        model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-        print(f"Model loaded successfully from {path}")
-        return model
-    except Exception as e:
-        print(f"Failed to load model from {path}. Error: {e}")
-        return None
-
-from PIL import Image
+# Paths to the models
+model_paths = ['myapp/brain_tumor_detector.h5']
 
 
-def preprocess_image(image_path, input_shape):
-    try:
-        img = Image.open(image_path)
-        img = img.resize(input_shape)
-        img_array = np.array(img)
-        img_array = img_array.astype('float32') / 255.0
-        img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
-        return img_array
-    except Exception as e:
-        logger.error(f"Error while preprocessing image {image_path}: {e}")
-        return None
-
-models = [load_model_safely(path) for path in model_paths]
-# Filter out any models that failed to load
-models = [model for model in models if model is not None]
-
-def predict_image(image_path):
-    logger.debug(f"Attempting to predict with image at path: {image_path}")
-
-    predictions = []
-    for i, model in enumerate(models):
-        input_shape = model.input_shape[1:3]  # Get the expected input shape
-        logger.debug(f"Model {i+1} expected input shape: {input_shape}")
-
-        img = preprocess_image(image_path, input_shape)
-        if img is None:
-            logger.debug(f"Image preprocessing failed for path: {image_path}")
-            continue
-
+def process_and_predict_image(image_path):
+    def load_model_safely(path):
         try:
-            prediction = model.predict(img)
-            predictions.append(prediction)
-            logger.debug(f"Prediction from model {i+1}: {prediction}")
+            model = tf.keras.models.load_model(path, compile=False)
+            model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+            print(f"Model loaded successfully from {path}")
+            return model
         except Exception as e:
-            logger.error(f"Failed to predict with model {i+1}. Error: {e}")
+            print(f"Failed to load model from {path}. Error: {e}")
+            return None
 
-    if predictions:
-        average_prediction = np.mean(predictions, axis=0)
-        return average_prediction
-    else:
-        logger.error("No predictions were made.")
-        return None
+    def preprocess_image(image_path, target_size):
+        try:
+            img = cv2.imread(image_path)
+            img = cv2.resize(img, target_size)
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            img = img / 255.0
+            img = np.expand_dims(img, axis=0)
+            return img
+        except Exception as e:
+            print(f"Error preprocessing image at {image_path}. Error: {e}")
+            return None
 
-
-
-
-from django.core.files.storage import default_storage
-from django.core.files.base import ContentFile
-def tumor_page(request):
-    if request.method == 'POST':
-        if 'image' in request.FILES:
-            uploaded_file = request.FILES['image']
-            file_name = uploaded_file.name
-            file_path = os.path.join(settings.MEDIA_ROOT, file_name)
+    def predict_image(image_path, models):
+        predictions = []
+        for i, model in enumerate(models):
+            input_shape = model.input_shape[1:3]
+            img = preprocess_image(image_path, input_shape)
+            if img is None:
+                continue
 
             try:
-                # Save uploaded file
-                with default_storage.open(file_path, 'wb+') as destination:
-                    for chunk in uploaded_file.chunks():
-                        destination.write(chunk)
-                file_path = "C:/Users/Apple Computer/Documents/backend/tumor/423.png"
-                result = predict_image(file_path)
-                if result is not None:
-                    final_result = result[0][0]
-                    diagnosis = "Tumor Detected" if final_result > 0.50 else "No Tumor Detected"
-
-                    # Save to the database
-                    TumorPrediction.objects.create(
-                        image_path=file_name,
-                        result=final_result,
-                        diagnosis=diagnosis
-                    )
-
-                    return render(request, 'tumor.html', {
-                        'image_url': uploaded_file.url,
-                        'diagnosis': diagnosis,
-                        'final_result': final_result
-                    })
-                else:
-                    return render(request, 'tumor.html', {
-                        'error': "Prediction failed."
-                    })
-
+                prediction = model.predict(img)
+                predictions.append(prediction)
+                print(f"Prediction from model {i + 1}: {prediction}")
             except Exception as e:
-                logger.error(f"Error saving file or predicting image: {e}")
-                return render(request, 'tumor.html', {
-                    'error': "An error occurred while processing the image."
-                })
-    return render(request, 'tumor.html')
+                print(f"Failed to predict with model {i + 1}. Error: {e}")
+
+        if predictions:
+            average_prediction = np.mean(predictions, axis=0)
+            return average_prediction
+        else:
+            print("No predictions were made.")
+            return None
+
+    def display_result(image_path, result):
+        if result is not None:
+            diagnosis = "Tumor Detected" if result > 0.50 else "No Tumor Detected"
+            img = cv2.imread(image_path)
+            img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            plt.imshow(img_rgb)
+            plt.title(f"{diagnosis}")
+            plt.axis('off')
+            plt.show()
+            return diagnosis
+
+    models = [load_model_safely(path) for path in model_paths]
+    models = [model for model in models if model is not None]
+
+    result = predict_image(image_path, models)
+    if result is not None:
+        final_result = result[0][0]
+        diagnosis = display_result(image_path, final_result)
+        return final_result, diagnosis
+    else:
+        print("Prediction failed.")
+        return None, None
+
+# Django TemplateView to handle the image upload and prediction
+class TumorDetectionView(TemplateView):
+    template_name = 'tumor.html'
+
+    def post(self, request, *args, **kwargs):
+        if 'image' in request.FILES:
+            image = request.FILES['image']
+            image_name = image.name
+
+            image_path = os.path.join(settings.MEDIA_ROOT, image_name)
+            with open(image_path, 'wb+') as destination:
+                for chunk in image.chunks():
+                    destination.write(chunk)
+
+            # Process the image and get the prediction
+            result, diagnosis = process_and_predict_image(image_path)
+
+            if result is not None:
+                # Save the prediction result to the database
+                TumorPrediction.objects.create(
+                    image_path=image_path,
+                    result=result,
+                    diagnosis=diagnosis
+                )
+            tumor_data =     TumorPrediction.objects.all().first()
+
+
+            context = {'result': tumor_data.result, 'diagnosis': tumor_data.diagnosis, "image_path": tumor_data.image_path}
+            return render(request, self.template_name, context)
+
+        return render(request, self.template_name)
+
 
 class ElementsPageView(TemplateView):
     template_name = 'elements.html'

@@ -22,5 +22,5 @@ from . import views
 urlpatterns = [
     path('elements/', views.ElementsPageView.as_view(), name='elements'),
     path('index/', views.IndexPageView.as_view(), name='index'),
-    path('tumor/', views.tumor_page, name='tumor_page'),
+    path('tumor/', views.TumorDetectionView.as_view(), name='index'),
 ]
