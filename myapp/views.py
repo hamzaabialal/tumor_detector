@@ -29,16 +29,19 @@ def load_model_safely(path):
         print(f"Failed to load model from {path}. Error: {e}")
         return None
 
-def preprocess_image(image_path, target_size):
+from PIL import Image
+
+
+def preprocess_image(image_path, input_shape):
     try:
-        img = cv2.imread(image_path)
-        img = cv2.resize(img, target_size)  # Resize based on the model's expected input size
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        img = img / 255.0
-        img = np.expand_dims(img, axis=0)
-        return img
+        img = Image.open(image_path)
+        img = img.resize(input_shape)
+        img_array = np.array(img)
+        img_array = img_array.astype('float32') / 255.0
+        img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
+        return img_array
     except Exception as e:
-        print(f"Error preprocessing image at {image_path}. Error: {e}")
+        logger.error(f"Error while preprocessing image {image_path}: {e}")
         return None
 
 models = [load_model_safely(path) for path in model_paths]
