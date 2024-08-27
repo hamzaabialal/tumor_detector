@@ -48,8 +48,7 @@ models = [model for model in models if model is not None]
 def predict_image(image_path):
     predictions = []
     for i, model in enumerate(models):
-        # Get the expected input shape for the model (skip the batch dimension)
-        input_shape = model.input_shape[1:3]  # E.g., (240, 240) or (224, 224)
+        input_shape = model.input_shape[1:3]  # Get the expected input shape
 
         img = preprocess_image(image_path, input_shape)
         if img is None:
@@ -58,16 +57,17 @@ def predict_image(image_path):
         try:
             prediction = model.predict(img)
             predictions.append(prediction)
-            print(f"Prediction from model {i+1}: {prediction}")
+            logger.debug(f"Prediction from model {i+1}: {prediction}")
         except Exception as e:
-            print(f"Failed to predict with model {i+1}. Error: {e}")
+            logger.error(f"Failed to predict with model {i+1}. Error: {e}")
 
     if predictions:
         average_prediction = np.mean(predictions, axis=0)
         return average_prediction
     else:
-        print("No predictions were made.")
+        logger.error("No predictions were made.")
         return None
+
 
 
 from django.core.files.storage import default_storage
@@ -84,7 +84,7 @@ def tumor_page(request):
                 with default_storage.open(file_path, 'wb+') as destination:
                     for chunk in uploaded_file.chunks():
                         destination.write(chunk)
-
+                file_path = "C:/Users/Apple Computer/Documents/backend/tumor/423.png"
                 result = predict_image(file_path)
                 if result is not None:
                     final_result = result[0][0]
