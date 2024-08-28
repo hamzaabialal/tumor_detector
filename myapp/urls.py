@@ -23,4 +23,6 @@ urlpatterns = [
     path('elements/', views.ElementsPageView.as_view(), name='elements_page'),
     path('index/', views.IndexPageView.as_view(), name='home_page'),
     path('tumor/', views.TumorDetectionView.as_view(), name='index'),
+    path('', views.signup_view, name='signup'),
+    path('login/', views.login_view, name='login'),
 ]

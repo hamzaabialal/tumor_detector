@@ -279,7 +279,8 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 
 									<section>
 										<h3 class="major">Form</h3>
-										<form method="post" action="#">
+										<form method="post">
+											{% csrf_token %}
 											<div class="row gtr-uniform">
 												<div class="col-6 col-12-xsmall">
 													<label for="demo-name">Name</label>
@@ -325,11 +326,22 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 												</div>
 												<div class="col-12">
 													<ul class="actions">
-														<li><input type="submit" value="Send Message" class="primary" /></li>
-														<li><input type="reset" value="Reset" /></li>
+														<li>
+															<input type="submit" value="Send Message" class="primary" onclick="preventFormSubmission(event)" />
+														</li>
+														<li>
+															<input type="reset" value="Reset" />
+														</li>
 													</ul>
 												</div>
-											</div>
+												
+												<script>
+													function preventFormSubmission(event) {
+														event.preventDefault(); // This prevents the form from being submitted
+														alert("Form submission prevented!");
+														// You can add additional logic here, like validation or other actions
+													}
+												</script>
 										</form>
 									</section>
 

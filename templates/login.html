@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Login - BrainAI</title>
+    <link rel="stylesheet" href="{% static 'assets/css/main.css' %}" />
+</head>
+<body class="is-preload">
+    <div id="page-wrapper">
+        <header id="header">
+            <h1><a href="{% url 'home_page' %}">BrainAI</a></h1>
+        </header>
+
+        <section id="wrapper">
+            <header>
+                <div class="inner">
+                    <h2>Login</h2>
+                </div>
+            </header>
+
+            <div class="wrapper">
+                <div class="inner">
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <ul class="actions">
+                            <li><button type="submit" class="button primary">Login</button></li>
+                        </ul>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
