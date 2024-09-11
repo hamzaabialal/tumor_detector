@@ -94,7 +94,6 @@
            <ul class="links">
     <li><a href="{% url 'home_page' %}">Home</a></li>
     <li><a href="{% url 'index' %}">Detection</a></li>
-    <li><a href="{% url 'elements_page' %}">Documentation</a></li>
 </ul>
             <a href="#" class="close">Close</a>
         </div>
@@ -136,19 +135,34 @@
                 </form>
 
                 <!-- Displaying the result -->
-                {% if image_url %}
-                <section id="imageContainer" class="box alt">
-                    <h1>Tumor Detection Results</h1>
-                    <p><span class="image left"><img src="{{ image_url }}" alt="Brain Scan" /></span>Detecting brain tumors early can significantly improve the chances of successful treatment. Our advanced imaging technologies provide detailed views of the brain, helping to identify abnormalities at the earliest stages. This allows for timely intervention and better patient outcomes. The integration of AI and machine learning in our diagnostic process enhances accuracy and efficiency, ensuring that no detail is overlooked. Understanding the structure and function of brain tissues is crucial in pinpointing the exact location and nature of a tumor, which is why our imaging techniques are designed to be both comprehensive and precise.</p>
-                </section>
-                {% endif %}
+                <!-- Displaying the error message if the image does not contain "dicom" -->
+{% if error %}
+    <div class="alert alert-danger">
+        {{ error }}
+    </div>
+{% endif %}
 
-                {% if result %}
-                    <h2>Diagnosis: {{ diagnosis }}</h2>
-                    <p>Prediction Confidence: {{ result }}</p>
-                {% else %}
-                    <p>No prediction could be made.</p>
-                {% endif %}
+<!-- Displaying the result if the image was successfully processed -->
+{% if image_url %}
+    <section id="imageContainer" class="box alt">
+        <h1>Tumor Detection Results</h1>
+        <p>
+            <span class="image left">
+                <img src="{{ image_url }}" alt="Brain Scan" />
+            </span>
+            Detecting brain tumors early can significantly improve the chances of successful treatment. Our advanced imaging technologies provide detailed views of the brain, helping to identify abnormalities at the earliest stages. This allows for timely intervention and better patient outcomes. The integration of AI and machine learning in our diagnostic process enhances accuracy and efficiency, ensuring that no detail is overlooked. Understanding the structure and function of brain tissues is crucial in pinpointing the exact location and nature of a tumor, which is why our imaging techniques are designed to be both comprehensive and precise.
+        </p>
+    </section>
+{% endif %}
+
+<!-- Displaying the diagnosis and prediction result -->
+{% if result %}
+    <h2>Diagnosis: {{ diagnosis }}</h2>
+    <p>Prediction Confidence: {{ result }}</p>
+{% else %}
+    <p>No prediction could be made.</p>
+{% endif %}
+
 
                 <!-- Additional content -->
                 <section>

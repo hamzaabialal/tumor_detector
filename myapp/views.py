@@ -90,7 +90,9 @@ class TumorDetectionView(TemplateView):
     def post(self, request, *args, **kwargs):
         if 'image' in request.FILES:
             image = request.FILES['image']
-            image_name = image.name
+            image_name = image.name.strip()
+            if 'dicom' not in image_name.lower():
+                return render(request, self.template_name, {'error': 'Please upload a valid image file.'})
 
             # Save the image
             image_path = os.path.join(settings.MEDIA_ROOT, image_name)

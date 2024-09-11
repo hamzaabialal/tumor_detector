@@ -1,0 +1,5 @@
+Django     # Specify the version of Django you are using
+numpy  # Specify the version of NumPy
+opencv-python # OpenCV for image processing
+matplotlib  # Matplotlib for plotting
+tensorflow
