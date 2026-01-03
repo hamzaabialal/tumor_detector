@@ -12,7 +12,7 @@ from djangoProject2 import settings
 from myapp.models import TumorPrediction
 
 # Paths to the models
-model_paths = ['myapp/brain_tumor_detector.h5']
+model_paths = [os.path.join(settings.BASE_DIR, 'myapp', 'brain_tumor_detector.h5')]
 
 
 def process_and_predict_image(image_path):
@@ -91,8 +91,12 @@ class TumorDetectionView(TemplateView):
         if 'image' in request.FILES:
             image = request.FILES['image']
             image_name = image.name.strip()
-            if 'dicom' not in image_name.lower():
-                return render(request, self.template_name, {'error': 'Please upload a valid image file.'})
+
+            # Validate image format
+            allowed_extensions = ['.png', '.jpg', '.jpeg', '.bmp', '.tiff', '.tif']
+            file_ext = os.path.splitext(image_name.lower())[1]
+            if file_ext not in allowed_extensions:
+                return render(request, self.template_name, {'error': 'Please upload a valid image file (PNG, JPG, JPEG, BMP, or TIFF).'})
 
             # Save the image
             image_path = os.path.join(settings.MEDIA_ROOT, image_name)
